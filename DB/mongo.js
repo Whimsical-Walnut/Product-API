@@ -8,7 +8,7 @@ mongoose.connect('mondodb://localhost/product', { useNewUrlParser: true, useUnif
   })
 
   let productSchema = new mongoose.Schema({
-    id: Number,
+    product_id: Number,
     name: String,
     slogan: String,
     description: String,
@@ -19,12 +19,7 @@ mongoose.connect('mondodb://localhost/product', { useNewUrlParser: true, useUnif
   let Product = mongoose.model('Product', productSchema);
 
   let featuresSchema = new mongoose.Schema({
-    id: Number,
-    name: String,
-    slogan: String,
-    description: String,
-    category: String,
-    default_price: String,
+    product_id: Number,
     features: [{
       feature: String,
       value: String
@@ -37,8 +32,7 @@ mongoose.connect('mondodb://localhost/product', { useNewUrlParser: true, useUnif
     product_id: String,
     results: [{
       style_id: Number,
-      name: String,
-      original_price: String,
+      style_name: String,
       sale_price: String,
       'default?': Boolean,
       photos: [{
@@ -55,9 +49,10 @@ mongoose.connect('mondodb://localhost/product', { useNewUrlParser: true, useUnif
 
   let Style = mongoose.model('Style', styleSchema);
 
-  let relatedSchema = new mongoose.Schema([
-    Number
-  ])
+  let relatedSchema = new mongoose.Schema({
+    product_id: Number,
+    related: [Number]
+  })
 
   let Related = mongoose.model('Related', relatedSchema);
 

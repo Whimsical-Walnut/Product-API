@@ -22,6 +22,19 @@ CREATE TABLE product (
   PRIMARY KEY (product_id)
 );
 
+CREATE TABLE category_product (
+  category_product_id INT NOT NULL AUTO_INCREMENT,
+  category_id INT NOT NULL,
+  product_id INT NOT NULL,
+  FOREIGN KEY (category_id)
+  REFERENCES category(category_id)
+  ON DELETE CASCADE,
+  FOREIGN KEY (product_id)
+  REFERENCES product(product_id)
+  ON DELETE CASCADE,
+  PRIMARY KEY (category_product_id)
+);
+
 CREATE TABLE features (
   feature_id INT NOT NULL AUTO_INCREMENT,
   feature VARCHAR(50) NOT NULL DEFAULT '',
