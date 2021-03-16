@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-mongoose.connect('mondodb://localhost/product', { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect('mongodb://localhost/product', { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
     console.log('MONGO CONNECTED')
   })
