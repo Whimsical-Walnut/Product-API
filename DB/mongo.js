@@ -40,7 +40,7 @@ mongoose.connect('mongodb://localhost/product', { useNewUrlParser: true, useUnif
   })
 
   let Product = mongoose.model('Product', productSchema);
-
+// do nesting for children.
   module.exports = {
     Product
   }

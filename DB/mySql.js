@@ -1,7 +1,7 @@
 const mysql = require('mysql');
 const connection = mysql.createConnection({
   user: 'root',
-  password: 'secret',
+  password: 'password',
   database: 'productAPI'
 })
 
@@ -13,3 +13,4 @@ connection.connect((err) => {
   }
 })
 
+module.exports = connection;
