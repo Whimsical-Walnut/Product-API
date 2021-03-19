@@ -2,15 +2,15 @@
 
 -- CREATE DATABASE productAPI;
 
-use productAPI;
+-- use productAPI;
 
 -- CREATE TABLE product (
 --   product_id INT NOT NULL AUTO_INCREMENT,
---   name VARCHAR(100) NOT NULL DEFAULT '',
---   slogan VARCHAR(255) NOT NULL DEFAULT '',
---   description VARCHAR(500) NOT NULL DEFAULT '',
---   category VARCHAR(50) NOT NULL DEFAULT '',
---   default_price VARCHAR(100) NOT NULL DEFAULT '',
+--   name VARCHAR(100) NOT NULL,
+--   slogan VARCHAR(255) NOT NULL,
+--   description VARCHAR(500) NOT NULL,
+--   category VARCHAR(50) NOT NULL,
+--   default_price VARCHAR(100) NOT NULL,
 --   PRIMARY KEY (product_id)
 -- );
 
@@ -42,10 +42,10 @@ use productAPI;
 -- CREATE TABLE style (
 --   style_id INT NOT NULL AUTO_INCREMENT,
 --   product_id INT NOT NULL,
---   style_name VARCHAR(100) NOT NULL DEFAULT '',
---   sale_price VARCHAR(100) NOT NULL DEFAULT '',
+--   style_name VARCHAR(100) NOT NULL,
+--   sale_price VARCHAR(100) NOT NULL,
 --   original_price VARCHAR(50),
---   default_bool TINYINT,
+--   default_bool BOOLEAN,
 --   FOREIGN KEY (product_id)
 --   REFERENCES product(product_id)
 --   ON DELETE CASCADE,
@@ -55,7 +55,7 @@ use productAPI;
 -- CREATE TABLE SKUS (
 --   SKU_id INT NOT NULL AUTO_INCREMENT,
 --   style_id INT NOT NULL,
---   size VARCHAR(10) NOT NULL DEFAULT '',
+--   size VARCHAR(10) NOT NULL,
 --   quantity INT NOT NULL DEFAULT 0,
 --   FOREIGN KEY (style_id)
 --   REFERENCES style(style_id)
@@ -66,8 +66,8 @@ use productAPI;
 -- CREATE TABLE photos (
 --   photos_id INT NOT NULL AUTO_INCREMENT,
 --   style_id INT NOT NULL,
---   url VARCHAR(500) NOT NULL DEFAULT '',
---   thumbnail_url VARCHAR(500) NOT NULL DEFAULT '',
+--   url VARCHAR(500) NOT NULL,
+--   thumbnail_url VARCHAR(500),
 --   FOREIGN KEY (style_id)
 --   REFERENCES style(style_id)
 --   ON DELETE CASCADE,

@@ -106,9 +106,52 @@ combineFeaturesProduct = (product_id) => {
 // SELECT * FROM product JOIN feature_product WHERE feature_product.product_id=product.product_id AND product.product_id=${product_id};
 
 // `SELECT * FROM style JOIN SKUS, photos WHERE SKUS.style_id=style.style_id AND photos.style_id=style.style_id AND style.product_id=${product_id};`
+// WITH top_reviews AS (
+//   SELECT *
+//   FROM reviews
+//   WHERE product_id = 51
+//   ORDER BY reviews.r_date DESC, reviews.helpfulness DESC
+//   LIMIT 5
+// ), review_photos AS (
+//   SELECT
+//     GROUP_CONCAT(photos.url) AS photo_list,
+//     photos.review_id AS extra,
+//     GROUP_CONCAT(photos.photo_id) AS photo_ids
+//   FROM photos
+//     JOIN top_reviews
+//     ON photos.review_id = top_reviews.review_id
+//   GROUP BY photos.review_id
+// )
+// SELECT *
+// FROM review_photos
+//   RIGHT JOIN top_reviews
+//   ON review_photos.extra = top_reviews.review_id;
+
 getStylePhotosSKUS = (product_id) => {
   return new Promise((resolve, reject) => {
-    let queryMySQL = `SELECT * FROM style JOIN SKUS ON SKUS.style_id=style.style_id LEFT JOIN photos ON photos.style_id=style.style_id WHERE style.product_id=${product_id};`
+    let queryMySQL = `WITH styles AS (
+      SELECT * FROM style WHERE product_id = ${product_id}
+    ), photo AS (
+      SELECT
+        GROUP_CONCAT(photos.url) AS pic,
+        GROUP_CONCAT(photos.thumbnail_url) AS thic,
+        photos.style_id AS extra
+        FROM photos
+         JOIN styles
+         ON photos.style_id = styles.style_id
+        GROUP BY photos.style_id
+    ), skuss AS (
+      SELECT
+        GROUP_CONCAT(SKUS.SKU_id) AS skuId,
+        GROUP_CONCAT(SIZE) AS skuSize,
+        GROUP_CONCAT(quantity) AS skuQuantity,
+        SKUS.style_id AS extra
+        FROM SKUS
+         JOIN styles
+         ON SKUS.style_id = styles.style_id
+         GROUP BY SKUS.style_id
+    )
+    SELECT * FROM styles INNER JOIN photo, skuss WHERE photo.extra = styles.style_id AND skuss.extra = styles.style_id;`
     DB.query(queryMySQL, (err, results) => {
       if (err) reject(err);
       resolve(results);
@@ -116,60 +159,114 @@ getStylePhotosSKUS = (product_id) => {
   })
 }
 
+
+
+// getStylePhotosSKUS = (product_id) => {
+//   return new Promise((resolve, reject) => {
+//     let queryMySQL = `SELECT * FROM style JOIN SKUS ON SKUS.style_id=style.style_id LEFT JOIN photos ON photos.style_id=style.style_id WHERE style.product_id=${product_id};`
+//     DB.query(queryMySQL, (err, results) => {
+//       if (err) reject(err);
+//       resolve(results);
+//     })
+//   })
+// }
+const createPhotos = (arrays, object) => {
+  for (let j = 0; j < arrays[0].length; j++) {
+    object.photos.push({
+      url: arrays[0][j],
+      thumbnail: arrays[1][j]
+    })
+  }
+}
+
+const createSKUS = (arrays, object) => {
+  for (let k = 0; k < arrays[2].length; k++) {
+    object.skus[arrays[2][k]] = {
+      size: arrays[3][k],
+      quantity: arrays[4][k]
+    }
+  }
+}
+
 combineStylePhotosSKUS = (product_id) => {
   return getStylePhotosSKUS(product_id)
   .then((result) => {
-    let skus = {};
-    let styles = {};
-    let photos = {};
+    let final = {
+      product_id: product_id.toString(),
+      results: [],
+    }
     for (let i = 0; i < result.length; i++) {
-      skus[result[i].style_id] = {
-        [result[i].SKU_id]: {
-          size: result[i].size,
-          quantity: result[i].quantity,
-        },
-        ...skus[result[i].style_id]
-      }
-      styles[result[i].style_id] = {
+      let obj = {
         style_id: result[i].style_id,
         name: result[i].style_name,
         original_price: result[i].original_price,
-        sale_price: result[i].sale_price === 'null'? '0': result[i].sale_price,
-        'default?': result[i].default_bool ? false: true,
-      }
-      photos[result[i].style_id] = {
-        [result[i].photos_id] : {
-          thumbnail_url: result[i].thumbnail_url,
-          url: result[i].url
-        },
-        ...photos[result[i].style_id]
-      }
-    }
-    let allStyles = Object.keys(styles);
-    let final = {
-      'product_id': product_id,
-      'results': []
-    }
-    for (let i = 0; i < allStyles.length; i++) {
-      let currentStyle = {
-        'style_id': Number(allStyles[i]),
-        'name': styles[allStyles[i]].name,
-        original_price: styles[allStyles[i]].original_price,
-        sale_price: styles[allStyles[i]].sale_price,
-        'default?': styles[allStyles[i]]['default?'],
+        sale_price: result[i].sale_price === 'null' ? 0 : result[i].sale_price,
+        'default?': result[i].default_bool ? false : true,
         photos: [],
-        skus: skus[allStyles[i]]
-      }
-      // console.log(currentStyle);
-      let pics = Object.values(photos[allStyles[i]])
-      for (let j = 0; j < pics.length; j++) {
-        currentStyle.photos.push(pics[j]);
-      }
-      final.results.push(currentStyle);
+        skus: {}
+      };
+      let array = [result[i].pic.split(','),result[i].thic.split(','), result[i].skuId.split(','),result[i].skuSize.split(','),result[i].skuQuantity.split(',')];
+      createPhotos(array, obj);
+      createSKUS(array, obj);
+      final.results.push(obj);
     }
     return final;
   })
 }
+
+// combineStylePhotosSKUS = (product_id) => {
+//   return getStylePhotosSKUS(product_id)
+//   .then((result) => {
+//     let skus = {};
+//     let styles = {};
+//     let photos = {};
+//     for (let i = 0; i < result.length; i++) {
+//       skus[result[i].style_id] = {
+//         [result[i].SKU_id]: {
+//           size: result[i].size,
+//           quantity: result[i].quantity,
+//         },
+//         ...skus[result[i].style_id]
+//       }
+//       styles[result[i].style_id] = {
+//         style_id: result[i].style_id,
+//         name: result[i].style_name,
+//         original_price: result[i].original_price,
+//         sale_price: result[i].sale_price === 'null'? '0': result[i].sale_price,
+//         'default?': result[i].default_bool ? false: true,
+//       }
+//       photos[result[i].style_id] = {
+//         [result[i].photos_id] : {
+//           thumbnail_url: result[i].thumbnail_url,
+//           url: result[i].url
+//         },
+//         ...photos[result[i].style_id]
+//       }
+//     }
+//     let allStyles = Object.keys(styles);
+//     let final = {
+//       'product_id': product_id,
+//       'results': []
+//     }
+//     for (let i = 0; i < allStyles.length; i++) {
+//       let currentStyle = {
+//         'style_id': Number(allStyles[i]),
+//         'name': styles[allStyles[i]].name,
+//         original_price: styles[allStyles[i]].original_price,
+//         sale_price: styles[allStyles[i]].sale_price,
+//         'default?': styles[allStyles[i]]['default?'],
+//         photos: [],
+//         skus: skus[allStyles[i]]
+//       }
+//       let pics = Object.values(photos[allStyles[i]])
+//       for (let j = 0; j < pics.length; j++) {
+//         currentStyle.photos.push(pics[j]);
+//       }
+//       final.results.push(currentStyle);
+//     }
+//     return final;
+//   })
+// }
 
 // getPhotos = (style_id) => {
 //   return new Promise((resolve, reject) => {
@@ -312,7 +409,7 @@ module.exports = {
 
 // combineStylePhotosSKUS(5555)
 // .then((result) => {
-//   console.log(result);
+//   // console.log(result);
 // })
 // .catch((err)=>{
 //   console.log(err);
