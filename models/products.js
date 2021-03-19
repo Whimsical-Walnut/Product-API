@@ -12,26 +12,6 @@ getProducts = (query) => {
   })
 }
 
-// getProduct = (product_id) => {
-//   return new Promise((resolve, reject) => {
-//     let queryMySQL = `SELECT * FROM product WHERE product_id=${product_id};`
-//     DB.query(queryMySQL, (err, results) => {
-//       if (err) reject(err);
-//       resolve(results[0]);
-//     })
-//   })
-// }
-
-// getFeature = (product_id) => {
-//   return new Promise((resolve, reject) => {
-//     let queryMySQL = `SELECT * FROM feature_product WHERE product_id=${product_id};`
-//     DB.query(queryMySQL, (err, results) => {
-//       if (err) reject(err);
-//       resolve(results);
-//     })
-//   })
-// }
-
 getProductFeature = (product_id) => {
   return new Promise((resolve, reject) => {
     let queryMySQL = `SELECT * FROM product JOIN feature_product WHERE feature_product.product_id=product.product_id AND product.product_id=${product_id};`
@@ -69,64 +49,6 @@ combineFeaturesProduct = (product_id) => {
   })
 }
 
-// combineFeaturesProduct = (product_id) => {
-//   return Promise.all([getFeature(product_id), getProduct(product_id)])
-//   .then((results) => {
-//     const product = {
-//       id: results[1].product_id,
-//       name: results[1].name,
-//       slogan: results[1].slogan,
-//       description: results[1].description,
-//       category: results[1].category,
-//       default_price: results[1].default_price,
-//       features: [],
-//     }
-//     for (let i = 0; i < results[0].length; i++) {
-//       let obj = {};
-//       obj.feature = results[0][i].feature;
-//       obj.value = results[0][i].value === 'null' ? null: results[0][i].value;
-//       product.features.push(obj);
-//     }
-//     return product;
-//   })
-//   .catch((err) => {
-//     console.log(err);
-//   })
-// }
-
-// getStyles = (product_id) => {
-//   return new Promise((resolve, reject) => {
-//     let queryMySQL = `SELECT * FROM style WHERE product_id=${product_id};`
-//     DB.query(queryMySQL, (err, results) => {
-//       if (err) reject(err);
-//       resolve(results);
-//     })
-//   })
-// }
-// SELECT * FROM product JOIN feature_product WHERE feature_product.product_id=product.product_id AND product.product_id=${product_id};
-
-// `SELECT * FROM style JOIN SKUS, photos WHERE SKUS.style_id=style.style_id AND photos.style_id=style.style_id AND style.product_id=${product_id};`
-// WITH top_reviews AS (
-//   SELECT *
-//   FROM reviews
-//   WHERE product_id = 51
-//   ORDER BY reviews.r_date DESC, reviews.helpfulness DESC
-//   LIMIT 5
-// ), review_photos AS (
-//   SELECT
-//     GROUP_CONCAT(photos.url) AS photo_list,
-//     photos.review_id AS extra,
-//     GROUP_CONCAT(photos.photo_id) AS photo_ids
-//   FROM photos
-//     JOIN top_reviews
-//     ON photos.review_id = top_reviews.review_id
-//   GROUP BY photos.review_id
-// )
-// SELECT *
-// FROM review_photos
-//   RIGHT JOIN top_reviews
-//   ON review_photos.extra = top_reviews.review_id;
-
 getStylePhotosSKUS = (product_id) => {
   return new Promise((resolve, reject) => {
     let queryMySQL = `WITH styles AS (
@@ -159,17 +81,6 @@ getStylePhotosSKUS = (product_id) => {
   })
 }
 
-
-
-// getStylePhotosSKUS = (product_id) => {
-//   return new Promise((resolve, reject) => {
-//     let queryMySQL = `SELECT * FROM style JOIN SKUS ON SKUS.style_id=style.style_id LEFT JOIN photos ON photos.style_id=style.style_id WHERE style.product_id=${product_id};`
-//     DB.query(queryMySQL, (err, results) => {
-//       if (err) reject(err);
-//       resolve(results);
-//     })
-//   })
-// }
 const createPhotos = (arrays, object) => {
   for (let j = 0; j < arrays[0].length; j++) {
     object.photos.push({
@@ -213,6 +124,76 @@ combineStylePhotosSKUS = (product_id) => {
     return final;
   })
 }
+
+getRelated = (product_id) => {
+  return new Promise((resolve, reject) => {
+    let queryMySQL = `SELECT * FROM related WHERE product1_id=${product_id};`
+    DB.query(queryMySQL, (err, results) => {
+      if (err) reject(err);
+      let related = [];
+      for (let i = 0; i < results.length; i++) {
+        related.push(results[i].product2_id);
+      }
+      resolve(related);
+    })
+  })
+}
+
+
+// getProduct = (product_id) => {
+//   return new Promise((resolve, reject) => {
+//     let queryMySQL = `SELECT * FROM product WHERE product_id=${product_id};`
+//     DB.query(queryMySQL, (err, results) => {
+//       if (err) reject(err);
+//       resolve(results[0]);
+//     })
+//   })
+// }
+
+// getFeature = (product_id) => {
+//   return new Promise((resolve, reject) => {
+//     let queryMySQL = `SELECT * FROM feature_product WHERE product_id=${product_id};`
+//     DB.query(queryMySQL, (err, results) => {
+//       if (err) reject(err);
+//       resolve(results);
+//     })
+//   })
+// }
+
+// combineFeaturesProduct = (product_id) => {
+//   return Promise.all([getFeature(product_id), getProduct(product_id)])
+//   .then((results) => {
+//     const product = {
+//       id: results[1].product_id,
+//       name: results[1].name,
+//       slogan: results[1].slogan,
+//       description: results[1].description,
+//       category: results[1].category,
+//       default_price: results[1].default_price,
+//       features: [],
+//     }
+//     for (let i = 0; i < results[0].length; i++) {
+//       let obj = {};
+//       obj.feature = results[0][i].feature;
+//       obj.value = results[0][i].value === 'null' ? null: results[0][i].value;
+//       product.features.push(obj);
+//     }
+//     return product;
+//   })
+//   .catch((err) => {
+//     console.log(err);
+//   })
+// }
+
+// getStylePhotosSKUS = (product_id) => {
+//   return new Promise((resolve, reject) => {
+//     let queryMySQL = `SELECT * FROM style JOIN SKUS ON SKUS.style_id=style.style_id LEFT JOIN photos ON photos.style_id=style.style_id WHERE style.product_id=${product_id};`
+//     DB.query(queryMySQL, (err, results) => {
+//       if (err) reject(err);
+//       resolve(results);
+//     })
+//   })
+// }
 
 // combineStylePhotosSKUS = (product_id) => {
 //   return getStylePhotosSKUS(product_id)
@@ -268,6 +249,16 @@ combineStylePhotosSKUS = (product_id) => {
 //   })
 // }
 
+// getStyles = (product_id) => {
+//   return new Promise((resolve, reject) => {
+//     let queryMySQL = `SELECT * FROM style WHERE product_id=${product_id};`
+//     DB.query(queryMySQL, (err, results) => {
+//       if (err) reject(err);
+//       resolve(results);
+//     })
+//   })
+// }
+
 // getPhotos = (style_id) => {
 //   return new Promise((resolve, reject) => {
 //     let queryMySQL = `SELECT * FROM photos WHERE style_id=${style_id};`
@@ -287,20 +278,6 @@ combineStylePhotosSKUS = (product_id) => {
 //     })
 //   })
 // }
-
-getRelated = (product_id) => {
-  return new Promise((resolve, reject) => {
-    let queryMySQL = `SELECT * FROM related WHERE product1_id=${product_id};`
-    DB.query(queryMySQL, (err, results) => {
-      if (err) reject(err);
-      let related = [];
-      for (let i = 0; i < results.length; i++) {
-        related.push(results[i].product2_id);
-      }
-      resolve(related);
-    })
-  })
-}
 
 // combineStylePhotosSKUS = (product_id) => {
 //   return getStyles(product_id)
