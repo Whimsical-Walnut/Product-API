@@ -81,20 +81,20 @@ getStylePhotosSKUS = (product_id) => {
   })
 }
 
-const createPhotos = (arrays, object) => {
-  for (let j = 0; j < arrays[0].length; j++) {
-    object.photos.push({
-      url: arrays[0][j],
-      thumbnail: arrays[1][j]
+const createPhotos = (data, style) => {
+  for (let j = 0; j < data[0].length; j++) {
+    style.photos.push({
+      url: data[0][j],
+      thumbnail: data[1][j]
     })
   }
 }
 
-const createSKUS = (arrays, object) => {
-  for (let k = 0; k < arrays[2].length; k++) {
-    object.skus[arrays[2][k]] = {
-      size: arrays[3][k],
-      quantity: arrays[4][k]
+const createSKUS = (data, style) => {
+  for (let k = 0; k < data[2].length; k++) {
+    style.skus[data[2][k]] = {
+      size: data[3][k],
+      quantity: data[4][k]
     }
   }
 }
@@ -107,19 +107,19 @@ combineStylePhotosSKUS = (product_id) => {
       results: [],
     }
     for (let i = 0; i < result.length; i++) {
-      let obj = {
+      let style = {
         style_id: result[i].style_id,
         name: result[i].style_name,
         original_price: result[i].original_price,
-        sale_price: result[i].sale_price === 'null' ? 0 : result[i].sale_price,
+        sale_price: result[i].sale_price === 'null' ? '0' : result[i].sale_price,
         'default?': result[i].default_bool ? false : true,
         photos: [],
         skus: {}
       };
-      let array = [result[i].pic.split(','),result[i].thic.split(','), result[i].skuId.split(','),result[i].skuSize.split(','),result[i].skuQuantity.split(',')];
-      createPhotos(array, obj);
-      createSKUS(array, obj);
-      final.results.push(obj);
+      let data = [result[i].pic.split(','),result[i].thic.split(','), result[i].skuId.split(','),result[i].skuSize.split(','),result[i].skuQuantity.split(',')];
+      createPhotos(data, style);
+      createSKUS(data, style);
+      final.results.push(style);
     }
     return final;
   })
@@ -138,7 +138,6 @@ getRelated = (product_id) => {
     })
   })
 }
-
 
 // getProduct = (product_id) => {
 //   return new Promise((resolve, reject) => {

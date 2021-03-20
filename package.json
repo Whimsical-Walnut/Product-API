@@ -6,7 +6,8 @@
   "scripts": {
     "start": "nodemon server/index.js",
     "cd": "mysql --local_infile -u root -p < DB/product.sql",
-    "mySQL": "mysql --local_infile -u root -p"
+    "mySQL": "mysql --local_infile -u root -p",
+    "k6": "k6 run --out influxdb=http://localhost:8086/myk6db scripts.js"
   },
   "repository": {
     "type": "git",
