@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon server/index.js",
+    "start": "node server/index.js",
+    "nodemon": "nodemon server/index.js",
     "cd": "mysql --local_infile -u root -p < DB/product.sql",
     "mySQL": "mysql --local_infile -u root -p",
     "k6": "k6 run --out influxdb=http://localhost:8086/myk6db scripts.js"
@@ -24,7 +25,8 @@
     "express": "^4.17.1",
     "fast-csv": "^4.3.6",
     "mongoose": "^5.12.0",
-    "mysql": "^2.18.1"
+    "mysql": "^2.18.1",
+    "mysql2": "^2.2.5"
   },
   "devDependencies": {
     "nodemon": "^2.0.7"

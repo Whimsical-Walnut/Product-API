@@ -4,6 +4,7 @@ module.exports = {
   products: (req, res) => {
     product.getProducts(req.query)
     .then((products) => {
+      console.log(products);
       res.status(200).send(products);
     })
     .catch((err) => {
