@@ -2,8 +2,14 @@ import http from 'k6/http';
 import { sleep } from 'k6';
 
 export let options = {
-  vus: 100,
-  duration: '120s',
+  stages: [
+    { duration: "30s", target: 1000 },
+    { duration: "30s", target: 50 },
+    { duration: "30s", target: 600 },
+    { duration: "30s", target: 300 },
+    { duration: "30s", target: 1000 },
+    { duration: "30s", target: 500 },
+  ]
 };
 let productId = 14034;
 export default function () {
