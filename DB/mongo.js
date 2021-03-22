@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-mongoose.connect('mondodb://localhost/product', { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect('mongodb://localhost/product', { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
     console.log('MONGO CONNECTED')
   })
@@ -13,23 +13,11 @@ mongoose.connect('mondodb://localhost/product', { useNewUrlParser: true, useUnif
     slogan: String,
     description: String,
     category: String,
-    default_price: String
-  })
-
-  let Product = mongoose.model('Product', productSchema);
-
-  let featuresSchema = new mongoose.Schema({
-    product_id: Number,
+    default_price: String,
     features: [{
       feature: String,
       value: String
-    }]
-  })
-
-  let Features = mongoose.model('Features', featuresSchema);
-
-  let styleSchema = new mongoose.Schema({
-    product_id: String,
+    }],
     results: [{
       style_id: Number,
       style_name: String,
@@ -38,24 +26,20 @@ mongoose.connect('mondodb://localhost/product', { useNewUrlParser: true, useUnif
       photos: [{
         thumbnail_url: String,
         url: String
-      }]
+      }],
       skus: [{
         skus_id: String,
         quantity: Number,
         size: String
-      }]
-    }]
+      }],
+    }],
+    related: [
+      Number
+    ]
   })
 
-  let Style = mongoose.model('Style', styleSchema);
-
-  let relatedSchema = new mongoose.Schema({
-    product_id: Number,
-    related: [Number]
-  })
-
-  let Related = mongoose.model('Related', relatedSchema);
-
+  let Product = mongoose.model('Product', productSchema);
+// do nesting for children.
   module.exports = {
-    Features, Style, Related, Product
+    Product
   }
