@@ -1,4 +1,5 @@
 node_modules
 Assets
+clean
 newrelic.js
 newrelic_agent.log
