@@ -74,13 +74,13 @@ CREATE TABLE photos (
   PRIMARY KEY (photos_id)
 );
 
-LOAD DATA LOCAL INFILE './tmp/product.csv'
+LOAD DATA LOCAL INFILE '/tmp/product.csv'
 INTO TABLE product
 FIELDS OPTIONALLY ENCLOSED BY '"'
 TERMINATED BY ','
 LINES TERMINATED BY '\n';
 
-LOAD DATA LOCAL INFILE './tmp/related.csv'
+LOAD DATA LOCAL INFILE '/tmp/related.csv'
 INTO TABLE related
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
@@ -108,7 +108,7 @@ ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
 IGNORE 1 ROWS;
 
-LOAD DATA LOCAL INFILE './tmp/features.csv'
+LOAD DATA LOCAL INFILE '/tmp/features.csv'
 INTO TABLE feature_product
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
