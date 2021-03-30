@@ -1,14 +1,14 @@
 const mysql = require('mysql2');
 const connection = mysql.createPool({
-  host: 'database',
-  // host: 'ec2-18-222-21-251.us-east-2.compute.amazonaws.com',
-  // port: 3306,
+  // host: 'database',
+  host: 'ec2-18-188-162-108.us-east-2.compute.amazonaws.com',
+  port: 3306,
   user: 'root',
-  // password: 'password',
   database: 'productAPI',
   waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0
+  // connectionLimit: 10,
+  // queueLimit: 0
+    // password: 'password',
 })
 
 // connection.connect((err) => {
