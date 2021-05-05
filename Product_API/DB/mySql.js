@@ -1,7 +1,7 @@
 const mysql = require('mysql2');
 const connection = mysql.createPool({
   // host: 'database',
-  host: 'ec2-18-188-162-108.us-east-2.compute.amazonaws.com',
+  host: 'ec2-3-137-175-40.us-east-2.compute.amazonaws.com',
   port: 3306,
   user: 'root',
   database: 'productAPI',
